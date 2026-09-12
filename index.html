@@ -15,6 +15,7 @@
             font-family: 'Georgia', serif;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -22,13 +23,14 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             width: 100%;
             background: linear-gradient(135deg, rgba(26, 37, 85, 0.95) 0%, rgba(45, 63, 102, 0.95) 100%);
             border: 3px solid #c9a961;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(201, 169, 97, 0.4);
+            margin-bottom: 30px;
         }
 
         .content {
@@ -36,39 +38,29 @@
             grid-template-columns: 1fr 1fr;
             gap: 40px;
             padding: 60px;
-            align-items: center;
+            align-items: flex-start;
         }
 
-        .text-section h1 {
-            font-size: 3.5em;
+        .event-info-section h1 {
             color: #f5f5f5;
+            font-size: 1.8em;
             margin-bottom: 20px;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(201, 169, 97, 0.5);
-            font-weight: normal;
-            letter-spacing: 3px;
-        }
-
-        .text-section .subtitle {
-            font-size: 1.4em;
-            color: #e8d5b7;
-            margin-bottom: 30px;
-            font-style: italic;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 2px;
         }
 
         .event-details {
             background: rgba(201, 169, 97, 0.15);
             border-left: 5px solid #c9a961;
-            padding: 25px;
-            margin: 30px 0;
+            padding: 20px;
             border-radius: 5px;
             backdrop-filter: blur(10px);
         }
 
         .event-details p {
             color: #e8d5b7;
-            font-size: 1.1em;
-            margin: 12px 0;
+            font-size: 1em;
+            margin: 10px 0;
             line-height: 1.6;
         }
 
@@ -94,28 +86,154 @@
             border-radius: 13px;
         }
 
-        .decorative-text {
-            text-align: center;
+        /* Task List Styles */
+        .task-container {
+            max-width: 1200px;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(26, 37, 85, 0.95) 0%, rgba(45, 63, 102, 0.95) 100%);
+            border: 3px solid #c9a961;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(201, 169, 97, 0.4);
+        }
+
+        .task-container h2 {
+            color: #f5f5f5;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 1px;
+        }
+
+        .task-subtitle {
             color: #c9a961;
-            font-size: 2em;
-            margin: 20px 0;
-            opacity: 0.8;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+            margin-bottom: 25px;
+            font-style: italic;
+            opacity: 0.9;
         }
 
-        .snowflake {
-            display: inline-block;
-            margin: 0 8px;
+        .task-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
         }
 
-        /* Snowflake animation */
-        @keyframes sparkle {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
+        .task-input-group input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #c9a961;
+            border-radius: 8px;
+            background: rgba(201, 169, 97, 0.1);
+            color: #e8d5b7;
+            font-size: 1em;
+            font-family: 'Georgia', serif;
+            transition: all 0.3s ease;
         }
 
-        .decorative-text {
-            animation: sparkle 3s infinite;
+        .task-input-group input::placeholder {
+            color: rgba(232, 213, 183, 0.5);
+        }
+
+        .task-input-group input:focus {
+            outline: none;
+            background: rgba(201, 169, 97, 0.2);
+            box-shadow: 0 0 15px rgba(201, 169, 97, 0.4);
+        }
+
+        .task-input-group button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #c9a961 0%, #d4b572 100%);
+            color: #1a2555;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(201, 169, 97, 0.3);
+        }
+
+        .task-input-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 169, 97, 0.5);
+        }
+
+        .task-input-group button:active {
+            transform: translateY(0);
+        }
+
+        .task-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(201, 169, 97, 0.1);
+            border-left: 4px solid #c9a961;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(201, 169, 97, 0.15);
+            box-shadow: 0 4px 12px rgba(201, 169, 97, 0.2);
+        }
+
+        .task-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #c9a961;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .task-item.completed .task-text {
+            color: #8b9db1;
+            text-decoration: line-through;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-text {
+            color: #e8d5b7;
+            font-size: 1em;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+
+        .delete-btn {
+            background: rgba(220, 100, 100, 0.8);
+            color: #f5f5f5;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .delete-btn:hover {
+            background: rgba(220, 100, 100, 1);
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #8b9db1;
+            padding: 40px 20px;
+            font-style: italic;
+            grid-column: 1 / -1;
         }
 
         @media (max-width: 768px) {
@@ -125,12 +243,28 @@
                 padding: 40px 30px;
             }
 
-            .text-section h1 {
-                font-size: 2.5em;
+            .event-info-section h1 {
+                font-size: 1.5em;
             }
 
-            .text-section .subtitle {
-                font-size: 1.1em;
+            .task-container {
+                padding: 30px 20px;
+            }
+
+            .task-container h2 {
+                font-size: 1.8em;
+            }
+
+            .task-input-group {
+                flex-direction: column;
+            }
+
+            .task-input-group button {
+                width: 100%;
+            }
+
+            .task-list {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -138,11 +272,8 @@
 <body>
     <div class="container">
         <div class="content">
-            <div class="text-section">
-                <div class="decorative-text">❄ ✦ ❄</div>
-                <h1>Save the Date</h1>
-                <p class="subtitle">A Regency Winter Celebration</p>
-                
+            <div class="event-info-section">
+                <h1>Event Details</h1>
                 <div class="event-details">
                     <p><strong>Event:</strong> ESM Winter Sneaker Ball</p>
                     <p><strong>Date:</strong> January 15, 2027</p>
@@ -150,12 +281,6 @@
                     <p><strong>Dress Code:</strong> Bridgerton-Inspired Formal Wear (Modern Sneakers Welcome!)</p>
                     <p><strong>Activities:</strong> Card Games • Karaoke • Line Dancing</p>
                 </div>
-
-                <p style="color: #e8d5b7; font-size: 1.1em; line-height: 1.8;">
-                    Join us for an enchanting afternoon of elegance, laughter, and festive cheer. Celebrate with coworkers in a winter wonderland of frosted garlands, twinkling lights, and candlelit elegance.
-                </p>
-
-                <div class="decorative-text">❄ ✦ ❄</div>
             </div>
 
             <div class="image-section">
@@ -163,5 +288,103 @@
             </div>
         </div>
     </div>
+
+    <!-- Task List Section -->
+    <div class="task-container">
+        <h2>📋 Party Planning Checklist</h2>
+        <p class="task-subtitle">Keep track of all the party planning tasks</p>
+        
+        <div class="task-input-group">
+            <input type="text" id="taskInput" placeholder="Add a new task..." autocomplete="off">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+
+        <ul class="task-list" id="taskList"></ul>
+        <div class="empty-state" id="emptyState">No tasks yet. Add one to get started! ✨</div>
+    </div>
+
+    <script>
+        // Load tasks from localStorage
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
+            const taskList = document.getElementById('taskList');
+            const emptyState = document.getElementById('emptyState');
+            
+            taskList.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})">
+                    <div class="task-content">
+                        <span class="task-text">${escapeHtml(task.text)}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+                `;
+                taskList.appendChild(li);
+            });
+        }
+
+        // Add a new task
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const taskText = input.value.trim();
+            
+            if (taskText === '') {
+                alert('Please enter a task!');
+                return;
+            }
+            
+            const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
+            tasks.push({ text: taskText, completed: false });
+            localStorage.setItem('partyTasks', JSON.stringify(tasks));
+            
+            input.value = '';
+            input.focus();
+            loadTasks();
+        }
+
+        // Toggle task completion
+        function toggleTask(index) {
+            const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
+            tasks[index].completed = !tasks[index].completed;
+            localStorage.setItem('partyTasks', JSON.stringify(tasks));
+            loadTasks();
+        }
+
+        // Delete a task
+        function deleteTask(index) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
+                tasks.splice(index, 1);
+                localStorage.setItem('partyTasks', JSON.stringify(tasks));
+                loadTasks();
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Allow Enter key to add task
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('taskInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    addTask();
+                }
+            });
+            loadTasks();
+        });
+    </script>
 </body>
 </html>
