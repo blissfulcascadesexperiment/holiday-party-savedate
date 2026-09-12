@@ -301,23 +301,25 @@
             grid-column: 1 / -1;
         }
 
-        .firebase-config-prompt {
-            background: rgba(220, 100, 100, 0.2);
-            border: 2px solid rgba(220, 100, 100, 0.6);
+        .firebase-status {
+            background: rgba(100, 200, 100, 0.2);
+            border: 2px solid rgba(100, 200, 100, 0.6);
             border-radius: 8px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 20px;
             color: #e8d5b7;
-        }
-
-        .firebase-config-prompt a {
-            color: #c9a961;
-            text-decoration: none;
+            text-align: center;
             font-weight: bold;
         }
 
-        .firebase-config-prompt a:hover {
-            text-decoration: underline;
+        .firebase-status.connected {
+            background: rgba(100, 200, 100, 0.2);
+            border-color: rgba(100, 200, 100, 0.6);
+        }
+
+        .firebase-status.error {
+            background: rgba(220, 100, 100, 0.2);
+            border-color: rgba(220, 100, 100, 0.6);
         }
 
         @media (max-width: 768px) {
@@ -382,16 +384,7 @@
         <h2>📋 Party Planning Checklist</h2>
         <p class="task-subtitle">Keep track of all the party planning tasks (Real-time Collaborative)</p>
         
-        <div id="firebaseWarning" class="firebase-config-prompt">
-            <strong>⚙️ Firebase Configuration Needed</strong><br>
-            To enable real-time collaboration across multiple devices, you need to:
-            <ol style="margin: 10px 0 0 20px;">
-                <li>Create a free Firebase project at <a href="https://firebase.google.com" target="_blank">firebase.google.com</a></li>
-                <li>Enable Realtime Database</li>
-                <li>Get your Firebase config and add it to this page</li>
-                <li>Follow the setup instructions that appear after configuration</li>
-            </ol>
-        </div>
+        <div id="firebaseStatus" class="firebase-status connected">✅ Real-time collaboration enabled</div>
         
         <div class="task-input-group">
             <input type="text" id="taskInput" placeholder="Add a new task..." autocomplete="off">
@@ -404,45 +397,27 @@
 
     <script>
         // ========== FIREBASE SETUP ==========
-        // Replace these with your Firebase config from https://console.firebase.google.com/
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyCR2MTsVTW5JgHdt0fz7QfbnJh6yY1114k",
+            authDomain: "sneaker-ball-86755.firebaseapp.com",
+            databaseURL: "https://sneaker-ball-86755-default-rtdb.firebaseio.com",
+            projectId: "sneaker-ball-86755",
+            storageBucket: "sneaker-ball-86755.firebasestorage.app",
+            messagingSenderId: "176261852340",
+            appId: "1:176261852340:web:2a566c8fc9af3debea3be1"
         };
 
         let db = null;
         let tasksRef = null;
         let isFirebaseConfigured = false;
 
-        // Check if Firebase is configured (not using placeholder values)
-        function checkFirebaseConfig() {
-            return firebaseConfig.apiKey && 
-                   firebaseConfig.apiKey !== "YOUR_API_KEY" &&
-                   firebaseConfig.databaseURL &&
-                   firebaseConfig.databaseURL !== "YOUR_DATABASE_URL";
-        }
-
-        // Initialize Firebase if configured
+        // Initialize Firebase
         function initFirebase() {
-            if (!checkFirebaseConfig()) {
-                console.log("Firebase not configured. Using local storage as fallback.");
-                isFirebaseConfigured = false;
-                loadTasksLocal();
-                return;
-            }
-
             try {
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database();
                 tasksRef = db.ref('partyTasks');
                 isFirebaseConfigured = true;
-                
-                document.getElementById('firebaseWarning').style.display = 'none';
                 
                 // Listen for real-time updates
                 tasksRef.on('value', (snapshot) => {
@@ -450,17 +425,23 @@
                 });
 
                 console.log("Firebase initialized successfully!");
+                updateStatus(true);
             } catch (error) {
                 console.error("Firebase initialization error:", error);
                 isFirebaseConfigured = false;
-                loadTasksLocal();
+                updateStatus(false, error.message);
             }
         }
 
-        // ========== LOCAL STORAGE FALLBACK ==========
-        function loadTasksLocal() {
-            const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
-            renderTasks(tasks);
+        function updateStatus(success, errorMsg = '') {
+            const statusEl = document.getElementById('firebaseStatus');
+            if (success) {
+                statusEl.className = 'firebase-status connected';
+                statusEl.innerHTML = '✅ Real-time collaboration enabled - All changes sync instantly!';
+            } else {
+                statusEl.className = 'firebase-status error';
+                statusEl.innerHTML = `⚠️ Firebase error: ${errorMsg}`;
+            }
         }
 
         // ========== FIREBASE FUNCTIONS ==========
@@ -491,13 +472,10 @@
             };
 
             if (isFirebaseConfigured) {
-                tasksRef.push(newTask);
-            } else {
-                const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
-                newTask.id = Date.now().toString();
-                tasks.push(newTask);
-                localStorage.setItem('partyTasks', JSON.stringify(tasks));
-                renderTasks(tasks);
+                tasksRef.push(newTask).catch(err => {
+                    console.error("Error adding task:", err);
+                    alert('Error saving task. Please try again.');
+                });
             }
             
             input.value = '';
@@ -508,31 +486,22 @@
             if (isFirebaseConfigured) {
                 tasksRef.child(taskId).once('value', (snapshot) => {
                     const task = snapshot.val();
-                    tasksRef.child(taskId).update({ completed: !task.completed });
+                    if (task) {
+                        tasksRef.child(taskId).update({ completed: !task.completed }).catch(err => {
+                            console.error("Error updating task:", err);
+                        });
+                    }
                 });
-            } else {
-                const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
-                const task = tasks.find(t => t.id === taskId);
-                if (task) {
-                    task.completed = !task.completed;
-                    localStorage.setItem('partyTasks', JSON.stringify(tasks));
-                    renderTasks(tasks);
-                }
             }
         }
 
         function deleteTask(taskId) {
             if (confirm('Are you sure you want to delete this task?')) {
                 if (isFirebaseConfigured) {
-                    tasksRef.child(taskId).remove();
-                } else {
-                    const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
-                    const index = tasks.findIndex(t => t.id === taskId);
-                    if (index > -1) {
-                        tasks.splice(index, 1);
-                        localStorage.setItem('partyTasks', JSON.stringify(tasks));
-                        renderTasks(tasks);
-                    }
+                    tasksRef.child(taskId).remove().catch(err => {
+                        console.error("Error deleting task:", err);
+                        alert('Error deleting task. Please try again.');
+                    });
                 }
             }
         }
@@ -549,16 +518,9 @@
                 tasksRef.child(taskId).update({ 
                     notes: notesText,
                     notesUpdated: new Date().toISOString()
+                }).catch(err => {
+                    console.error("Error saving notes:", err);
                 });
-            } else {
-                const tasks = JSON.parse(localStorage.getItem('partyTasks')) || [];
-                const task = tasks.find(t => t.id === taskId);
-                if (task) {
-                    task.notes = notesText;
-                    task.notesUpdated = new Date().toISOString();
-                    localStorage.setItem('partyTasks', JSON.stringify(tasks));
-                    renderTasks(tasks);
-                }
             }
         }
 
@@ -576,7 +538,7 @@
             
             emptyState.style.display = 'none';
             tasks.forEach((task) => {
-                const taskId = task.id || Date.now().toString();
+                const taskId = task.id;
                 const li = document.createElement('li');
                 li.className = `task-item ${task.completed ? 'completed' : ''}`;
                 
@@ -616,7 +578,7 @@
                 }
             });
             
-            // Initialize
+            // Initialize Firebase
             initFirebase();
         });
     </script>
