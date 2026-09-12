@@ -322,6 +322,11 @@
             border-color: rgba(220, 100, 100, 0.6);
         }
 
+        .firebase-status.loading {
+            background: rgba(150, 150, 200, 0.2);
+            border-color: rgba(150, 150, 200, 0.6);
+        }
+
         @media (max-width: 768px) {
             .content {
                 grid-template-columns: 1fr;
@@ -384,7 +389,7 @@
         <h2>📋 Party Planning Checklist</h2>
         <p class="task-subtitle">Keep track of all the party planning tasks (Real-time Collaborative)</p>
         
-        <div id="firebaseStatus" class="firebase-status connected">✅ Real-time collaboration enabled</div>
+        <div id="firebaseStatus" class="firebase-status loading">⏳ Connecting to database...</div>
         
         <div class="task-input-group">
             <input type="text" id="taskInput" placeholder="Add a new task..." autocomplete="off">
@@ -396,6 +401,21 @@
     </div>
 
     <script>
+        // Wait for Firebase to load before initializing
+        let retries = 0;
+        const maxRetries = 50;
+
+        function waitForFirebase() {
+            if (typeof firebase !== 'undefined' && firebase.app) {
+                initFirebase();
+            } else if (retries < maxRetries) {
+                retries++;
+                setTimeout(waitForFirebase, 100);
+            } else {
+                updateStatus(false, 'Firebase SDK failed to load');
+            }
+        }
+
         // ========== FIREBASE SETUP ==========
         const firebaseConfig = {
             apiKey: "AIzaSyCR2MTsVTW5JgHdt0fz7QfbnJh6yY1114k",
@@ -414,7 +434,11 @@
         // Initialize Firebase
         function initFirebase() {
             try {
-                firebase.initializeApp(firebaseConfig);
+                // Check if already initialized
+                if (firebase.apps.length === 0) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                
                 db = firebase.database();
                 tasksRef = db.ref('partyTasks');
                 isFirebaseConfigured = true;
@@ -464,6 +488,11 @@
                 return;
             }
             
+            if (!isFirebaseConfigured) {
+                alert('Database not connected yet. Please refresh and try again.');
+                return;
+            }
+            
             const newTask = {
                 text: taskText,
                 completed: false,
@@ -471,12 +500,10 @@
                 createdAt: new Date().toISOString()
             };
 
-            if (isFirebaseConfigured) {
-                tasksRef.push(newTask).catch(err => {
-                    console.error("Error adding task:", err);
-                    alert('Error saving task. Please try again.');
-                });
-            }
+            tasksRef.push(newTask).catch(err => {
+                console.error("Error adding task:", err);
+                alert('Error saving task. Please try again.');
+            });
             
             input.value = '';
             input.focus();
@@ -570,17 +597,8 @@
             return div.innerHTML;
         }
 
-        // ========== EVENT LISTENERS ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('taskInput').addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    addTask();
-                }
-            });
-            
-            // Initialize Firebase
-            initFirebase();
-        });
+        // ========== START HERE ==========
+        waitForFirebase();
     </script>
 </body>
 </html>
