@@ -115,6 +115,24 @@
             opacity: 0.9;
         }
 
+        .planning-doc-link {
+            margin: 0 0 25px 0;
+            display: inline-block;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #c9a961 0%, #d4b572 100%);
+            color: #1a2555;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(201, 169, 97, 0.3);
+        }
+
+        .planning-doc-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 169, 97, 0.5);
+        }
+
         .task-input-group {
             display: flex;
             gap: 10px;
@@ -388,6 +406,8 @@
     <div class="task-container">
         <h2>📋 Party Planning Checklist</h2>
         <p class="task-subtitle">Keep track of all the party planning tasks (Real-time Collaborative)</p>
+
+        <a class="planning-doc-link" href="https://docs.google.com/spreadsheets/d/1kXtVk9IWqF4yjWy1fOl3iwOMBoErAn82WlgfMMNi2Kw/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">Open Party Planning Spreadsheet</a>
         
         <div id="firebaseStatus" class="firebase-status loading">⏳ Connecting to database...</div>
         
