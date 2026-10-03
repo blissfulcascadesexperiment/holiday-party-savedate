@@ -88,7 +88,6 @@
             border-radius: 13px;
         }
 
-        /* Task List Styles */
         .task-container {
             max-width: 1200px;
             width: 100%;
@@ -131,6 +130,23 @@
         .planning-doc-link:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(201, 169, 97, 0.5);
+        }
+
+        .sheet-embed-wrap {
+            margin-top: 20px;
+            border: 2px solid rgba(201, 169, 97, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(26, 37, 85, 0.7);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .sheet-embed-wrap iframe {
+            width: 100%;
+            height: 700px;
+            border: 0;
+            display: block;
+            background: white;
         }
 
         .task-input-group {
@@ -379,6 +395,10 @@
             .task-actions {
                 flex-wrap: wrap;
             }
+
+            .sheet-embed-wrap iframe {
+                height: 500px;
+            }
         }
     </style>
 </head>
@@ -402,12 +422,15 @@
         </div>
     </div>
 
-    <!-- Task List Section -->
     <div class="task-container">
         <h2>📋 Party Planning Checklist</h2>
         <p class="task-subtitle">Keep track of all the party planning tasks (Real-time Collaborative)</p>
 
         <a class="planning-doc-link" href="https://docs.google.com/spreadsheets/d/1kXtVk9IWqF4yjWy1fOl3iwOMBoErAn82WlgfMMNi2Kw/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">Open Party Planning Spreadsheet</a>
+
+        <div class="sheet-embed-wrap">
+            <iframe src="https://docs.google.com/spreadsheets/d/1kXtVk9IWqF4yjWy1fOl3iwOMBoErAn82WlgfMMNi2Kw/htmlembed?single=true&widget=false&headers=false&gid=0" title="Party Planning Spreadsheet"></iframe>
+        </div>
         
         <div id="firebaseStatus" class="firebase-status loading">⏳ Connecting to database...</div>
         
@@ -421,7 +444,6 @@
     </div>
 
     <script>
-        // Wait for Firebase to load before initializing
         let retries = 0;
         const maxRetries = 50;
 
@@ -436,7 +458,6 @@
             }
         }
 
-        // ========== FIREBASE SETUP ==========
         const firebaseConfig = {
             apiKey: "AIzaSyCR2MTsVTW5JgHdt0fz7QfbnJh6yY1114k",
             authDomain: "sneaker-ball-86755.firebaseapp.com",
@@ -451,10 +472,8 @@
         let tasksRef = null;
         let isFirebaseConfigured = false;
 
-        // Initialize Firebase
         function initFirebase() {
             try {
-                // Check if already initialized
                 if (firebase.apps.length === 0) {
                     firebase.initializeApp(firebaseConfig);
                 }
@@ -463,7 +482,6 @@
                 tasksRef = db.ref('partyTasks');
                 isFirebaseConfigured = true;
                 
-                // Listen for real-time updates
                 tasksRef.on('value', (snapshot) => {
                     loadTasksFirebase(snapshot.val());
                 });
@@ -488,7 +506,6 @@
             }
         }
 
-        // ========== FIREBASE FUNCTIONS ==========
         function loadTasksFirebase(firebaseTasks) {
             const tasks = [];
             if (firebaseTasks) {
@@ -571,7 +588,6 @@
             }
         }
 
-        // ========== RENDERING ==========
         function renderTasks(tasks) {
             const taskList = document.getElementById('taskList');
             const emptyState = document.getElementById('emptyState');
@@ -617,7 +633,6 @@
             return div.innerHTML;
         }
 
-        // ========== START HERE ==========
         waitForFirebase();
     </script>
 </body>
